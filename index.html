@@ -927,9 +927,9 @@
             <section class="validation-item">
               <div class="stage-head">
                 <strong>Markdown風入力</strong>
-                <span class="badge warn">needs test</span>
+                <span class="badge warn">manual trigger</span>
               </div>
-              <small>#、##、**太字**、リスト、リンクを実機で確認する。</small>
+              <small>貼り付けだけでは変換されにくい。手動でスペース入力などの発火が必要。</small>
             </section>
             <section class="validation-item">
               <div class="stage-head">
@@ -943,7 +943,7 @@
                 <strong>画像記法</strong>
                 <span class="badge warn">needs test</span>
               </div>
-              <small>Markdown画像記法やHTML内画像は対応未確認。</small>
+              <small>Markdown画像記法は期待しない。画像はコピーして直接貼る。</small>
             </section>
           </div>
 
@@ -953,13 +953,13 @@
                 <h3>X Articles検証キット</h3>
                 <p class="subtle">各ボタンをコピーして、X Articles本文欄へ貼り付けて挙動を確認する。</p>
               </div>
-              <button type="button" class="copy-test" data-sample="allMarkdown">全Markdownテストコピー</button>
+              <button type="button" class="copy-test-html">HTML貼り付けテストコピー</button>
             </div>
             <div class="test-grid">
               <section class="test-case">
                 <div class="item-head">
                   <h3>見出し</h3>
-                  <span class="badge warn">needs test</span>
+                  <span class="badge warn">manual trigger</span>
                 </div>
                 <code># H1 test
 ## H2 test
@@ -970,7 +970,7 @@
               <section class="test-case">
                 <div class="item-head">
                   <h3>強調</h3>
-                  <span class="badge warn">needs test</span>
+                  <span class="badge warn">manual trigger</span>
                 </div>
                 <code>**bold**
 *italic*
@@ -981,7 +981,7 @@
               <section class="test-case">
                 <div class="item-head">
                   <h3>リスト</h3>
-                  <span class="badge warn">needs test</span>
+                  <span class="badge warn">manual trigger</span>
                 </div>
                 <code>- bullet one
 - bullet two
@@ -1051,10 +1051,10 @@ https://x.com</code>
               <section class="test-case">
                 <div class="item-head">
                   <h3>本文統合</h3>
-                  <span class="badge warn">needs test</span>
+                  <span class="badge warn">fallback</span>
                 </div>
-                <code>本文Markdownコピーの実運用サンプル</code>
-                <button type="button" id="copyValidationArticle">本文サンプルコピー</button>
+                <code>HTMLコピーが効かない場合だけMarkdownを検証</code>
+                <button type="button" id="copyValidationArticle">Markdownサンプルコピー</button>
               </section>
             </div>
           </section>
@@ -1130,8 +1130,8 @@ https://x.com</code>
             </div>
             <div class="toolbar-group">
               <button type="button" id="copyTitle">タイトルコピー</button>
-              <button type="button" id="copyArticleText">本文Markdownコピー</button>
               <button type="button" id="copyArticleHtml">本文HTMLコピー</button>
+              <button type="button" id="copyArticleText">Markdown検証コピー</button>
             </div>
           </div>
           <div class="panel-body">
@@ -1363,9 +1363,9 @@ https://x.com</code>
           },
           {
             kind: "copy",
-            label: "本文Markdownコピー",
-            instruction: "本文欄へ貼る。## 小見出し、**太字**、画像差し込み位置マーカーを含める。",
-            action: `<button type="button" id="copyPlanText">本文Markdownコピー</button>`
+            label: "本文HTMLコピー",
+            instruction: "本文欄へ貼る。見出し、太字、リストなどはリッチテキストとしてコピーする。",
+            action: `<button type="button" id="copyPlanHtml">本文HTMLコピー</button>`
           },
           {
             kind: "image",
@@ -1378,7 +1378,7 @@ https://x.com</code>
           {
             kind: "paste",
             label: "本文欄へ貼り付け",
-            instruction: "Markdown風の書式が反映されるか確認し、[画像: ...] のマーカー位置を順に確認する。"
+            instruction: "HTML書式が反映されるか確認し、[画像: ...] のマーカー位置を順に確認する。Markdownは補助検証に回す。"
           },
           ...draft.images.map((image, index) => ({
             kind: "image",
@@ -1572,6 +1572,12 @@ https://x.com</code>
         const copyPlanTextButton = event.target.closest("#copyPlanText");
         if (copyPlanTextButton) {
           copyArticleText().catch(() => showToast("本文をコピーできませんでした"));
+          return;
+        }
+
+        const copyPlanHtmlButton = event.target.closest("#copyPlanHtml");
+        if (copyPlanHtmlButton) {
+          copyArticleHtml().catch(() => showToast("HTMLをコピーできませんでした"));
           return;
         }
 
