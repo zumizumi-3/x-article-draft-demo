@@ -352,6 +352,15 @@
         overflow: hidden;
       }
 
+      .test-kit summary {
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .test-kit summary::-webkit-details-marker {
+        display: none;
+      }
+
       .test-kit-head {
         display: flex;
         justify-content: space-between;
@@ -916,148 +925,6 @@
             </section>
           </div>
 
-          <div class="validation-strip" aria-label="X Articles editor validation list">
-            <section class="validation-item">
-              <div class="stage-head">
-                <strong>タイトル欄</strong>
-                <span class="badge">confirmed</span>
-              </div>
-              <small>タイトルは本文とは別入力。本文コピーには含めない。</small>
-            </section>
-            <section class="validation-item">
-              <div class="stage-head">
-                <strong>Markdown風入力</strong>
-                <span class="badge warn">manual trigger</span>
-              </div>
-              <small>貼り付けだけでは変換されにくい。手動でスペース入力などの発火が必要。</small>
-            </section>
-            <section class="validation-item">
-              <div class="stage-head">
-                <strong>画像ペースト</strong>
-                <span class="badge">confirmed</span>
-              </div>
-              <small>生成画像はコピーして本文中のマーカー位置へ貼る。</small>
-            </section>
-            <section class="validation-item">
-              <div class="stage-head">
-                <strong>画像記法</strong>
-                <span class="badge warn">needs test</span>
-              </div>
-              <small>Markdown画像記法は期待しない。画像はコピーして直接貼る。</small>
-            </section>
-          </div>
-
-          <section class="test-kit" aria-label="X Articles paste test kit">
-            <div class="test-kit-head">
-              <div>
-                <h3>X Articles検証キット</h3>
-                <p class="subtle">各ボタンをコピーして、X Articles本文欄へ貼り付けて挙動を確認する。</p>
-              </div>
-              <button type="button" class="copy-test-html">HTML貼り付けテストコピー</button>
-            </div>
-            <div class="test-grid">
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>見出し</h3>
-                  <span class="badge warn">manual trigger</span>
-                </div>
-                <code># H1 test
-## H2 test
-### H3 test</code>
-                <button type="button" class="copy-test" data-sample="headings">コピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>強調</h3>
-                  <span class="badge warn">manual trigger</span>
-                </div>
-                <code>**bold**
-*italic*
-~~strike~~</code>
-                <button type="button" class="copy-test" data-sample="emphasis">コピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>リスト</h3>
-                  <span class="badge warn">manual trigger</span>
-                </div>
-                <code>- bullet one
-- bullet two
-
-1. ordered one
-2. ordered two</code>
-                <button type="button" class="copy-test" data-sample="lists">コピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>リンク</h3>
-                  <span class="badge warn">needs test</span>
-                </div>
-                <code>[OpenAI](https://openai.com)
-https://x.com</code>
-                <button type="button" class="copy-test" data-sample="links">コピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>引用/区切り</h3>
-                  <span class="badge warn">needs test</span>
-                </div>
-                <code>&gt; quoted line
-
----</code>
-                <button type="button" class="copy-test" data-sample="quoteRule">コピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>Markdown画像</h3>
-                  <span class="badge warn">needs test</span>
-                </div>
-                <code>![alt text](https://placehold.co/1200x630/png)</code>
-                <button type="button" class="copy-test" data-sample="markdownImage">コピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>HTML貼り付け</h3>
-                  <span class="badge warn">needs test</span>
-                </div>
-                <code>&lt;h2&gt;HTML H2&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;HTML bold&lt;/strong&gt;&lt;/p&gt;</code>
-                <button type="button" class="copy-test-html">HTMLとしてコピー</button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>画像コピペ</h3>
-                  <span class="badge">confirmed</span>
-                </div>
-                <code>画像をコピーして本文欄に直接ペースト</code>
-                <button
-                  type="button"
-                  class="copy-image"
-                  data-kind="inline"
-                  data-title="X Articles paste test image"
-                  data-purpose="Image paste validation sample"
-                >
-                  テスト画像コピー
-                </button>
-              </section>
-
-              <section class="test-case">
-                <div class="item-head">
-                  <h3>本文統合</h3>
-                  <span class="badge warn">fallback</span>
-                </div>
-                <code>HTMLコピーが効かない場合だけMarkdownを検証</code>
-                <button type="button" id="copyValidationArticle">Markdownサンプルコピー</button>
-              </section>
-            </div>
-          </section>
         </div>
       </section>
 
@@ -1171,7 +1038,6 @@ https://x.com</code>
       const copyTitleButton = document.querySelector("#copyTitle");
       const copyArticleTextButton = document.querySelector("#copyArticleText");
       const copyArticleHtmlButton = document.querySelector("#copyArticleHtml");
-      const copyValidationArticleButton = document.querySelector("#copyValidationArticle");
 
       const TEST_SAMPLES = {
         headings: "# H1 test\n\n## H2 test\n\n### H3 test",
@@ -1478,6 +1344,55 @@ https://x.com</code>
         await copyText(HTML_TEST_SAMPLE);
       }
 
+      async function copyRichHtmlImageTestSample() {
+        const imageDataUrl = buildTestImageDataUrl("HTML image test", "Embedded image candidate");
+        const html = [
+          "<h2>HTML rich paste test</h2>",
+          "<p><strong>Bold lead sentence.</strong> This paragraph should keep rich formatting.</p>",
+          "<ul><li>List item one</li><li>List item two</li></ul>",
+          `<p><img src="${imageDataUrl}" alt="Embedded image candidate" style="max-width: 100%; border-radius: 8px;" /></p>`,
+          "<p>Text after image.</p>"
+        ].join("");
+        const plainText = "HTML rich paste test\n\nBold lead sentence.\n\n- List item one\n- List item two\n\n[embedded image]\n\nText after image.";
+
+        if (window.ClipboardItem) {
+          const item = new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([plainText], { type: "text/plain" })
+          });
+          await navigator.clipboard.write([item]);
+          showToast("画像込みHTMLテストをコピーしました");
+          return;
+        }
+
+        await copyText(plainText);
+      }
+
+      function buildTestImageDataUrl(title, purpose) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1200;
+        canvas.height = 630;
+        const context = canvas.getContext("2d");
+        const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, "#17202a");
+        gradient.addColorStop(0.58, "#0b7a75");
+        gradient.addColorStop(1, "#255f99");
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "rgba(255,255,255,0.12)";
+        for (let index = -canvas.height; index < canvas.width; index += 48) {
+          context.fillRect(index, 0, 14, canvas.height * 2);
+        }
+        context.fillStyle = "rgba(255,255,255,0.92)";
+        context.font = "700 54px sans-serif";
+        drawWrappedText(context, title, 64, 430, canvas.width - 128, 64);
+        context.fillStyle = "rgba(255,255,255,0.78)";
+        context.font = "400 28px sans-serif";
+        drawWrappedText(context, purpose, 64, 540, canvas.width - 128, 38);
+
+        return canvas.toDataURL("image/png");
+      }
+
       async function copyMockImage(title, purpose, kind) {
         if (!window.ClipboardItem) {
           showToast("このブラウザでは画像コピーに未対応です");
@@ -1559,9 +1474,6 @@ https://x.com</code>
       copyArticleHtmlButton.addEventListener("click", () => {
         copyArticleHtml().catch(() => showToast("HTMLをコピーできませんでした"));
       });
-      copyValidationArticleButton.addEventListener("click", () => {
-        copyArticleText().catch(() => showToast("本文サンプルをコピーできませんでした"));
-      });
       document.addEventListener("click", (event) => {
         const copyPlanTitleButton = event.target.closest("#copyPlanTitle");
         if (copyPlanTitleButton) {
@@ -1596,6 +1508,12 @@ https://x.com</code>
         const copyTestHtmlButton = event.target.closest(".copy-test-html");
         if (copyTestHtmlButton) {
           copyHtmlTestSample().catch(() => showToast("HTMLテストをコピーできませんでした"));
+          return;
+        }
+
+        const copyTestRichButton = event.target.closest(".copy-test-rich");
+        if (copyTestRichButton) {
+          copyRichHtmlImageTestSample().catch(() => showToast("画像込みHTMLテストをコピーできませんでした"));
           return;
         }
 

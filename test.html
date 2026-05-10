@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>X Articles Paste Test</title>
+    <style>
+      :root {
+        --bg: #f6f7f9;
+        --surface: #ffffff;
+        --ink: #17202a;
+        --muted: #5f6b7a;
+        --line: #d8dee7;
+        --accent: #0b7a75;
+        --warn: #9a6212;
+        --warn-soft: #fff4d7;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      main {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      h1,
+      h2,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 24px;
+        line-height: 1.25;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: start;
+        margin-bottom: 16px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        display: grid;
+        gap: 10px;
+      }
+
+      code {
+        display: block;
+        min-height: 72px;
+        padding: 10px;
+        border-radius: 8px;
+        background: #f8fafc;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      button {
+        min-height: 38px;
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        background: var(--accent);
+        color: white;
+        padding: 0 14px;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .secondary {
+        border-color: var(--line);
+        background: white;
+        color: var(--ink);
+      }
+
+      .badge {
+        display: inline-flex;
+        width: fit-content;
+        min-height: 22px;
+        align-items: center;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: var(--warn-soft);
+        color: var(--warn);
+        font-size: 12px;
+      }
+
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--ink);
+        color: white;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 760px) {
+        main {
+          padding: 14px;
+        }
+
+        .head,
+        .grid {
+          grid-template-columns: 1fr;
+          display: grid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="head">
+        <div>
+          <h1>X Articles Paste Test</h1>
+          <p>内部確認用。コピーしてX Articles本文欄へ貼り付け、書式と画像の保持を確認します。</p>
+        </div>
+        <a href="./index.html">顧客向けデモへ戻る</a>
+      </div>
+
+      <section class="grid">
+        <article class="card">
+          <span class="badge">primary test</span>
+          <h2>画像込みHTML</h2>
+          <p>H2、太字、リスト、data URL画像をまとめてHTMLとしてコピーします。</p>
+          <code>HTML H2
+Bold paragraph
+- List item
+[embedded image]
+Text after image</code>
+          <button type="button" id="copyRich">画像込みHTMLテストコピー</button>
+        </article>
+
+        <article class="card">
+          <span class="badge">fallback</span>
+          <h2>HTMLのみ</h2>
+          <p>画像なしのリッチテキスト貼り付け確認です。</p>
+          <code>&lt;h2&gt;HTML H2&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;HTML bold&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;&lt;li&gt;HTML list item&lt;/li&gt;&lt;/ul&gt;</code>
+          <button type="button" id="copyHtml">HTMLとしてコピー</button>
+        </article>
+
+        <article class="card">
+          <span class="badge">confirmed path</span>
+          <h2>画像単体</h2>
+          <p>画像だけをコピーして、本文中に直接ペーストします。</p>
+          <code>Generated PNG copied to clipboard</code>
+          <button type="button" id="copyImage">テスト画像コピー</button>
+        </article>
+
+        <article class="card">
+          <span class="badge">manual trigger</span>
+          <h2>Markdown補助</h2>
+          <p>貼り付けだけでは変換されにくいため、補助確認に留めます。</p>
+          <code># H1 test
+
+## H2 test
+
+**bold**
+
+- list item</code>
+          <button type="button" id="copyMarkdown" class="secondary">Markdownテストコピー</button>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const HTML_SAMPLE =
+        "<h2>HTML H2</h2><p><strong>HTML bold</strong> and <em>HTML italic</em></p><ul><li>HTML list item</li></ul>";
+      const MARKDOWN_SAMPLE = "# H1 test\n\n## H2 test\n\n**bold**\n\n- list item";
+
+      async function copyText(value) {
+        await navigator.clipboard.writeText(value);
+        showToast("コピーしました");
+      }
+
+      async function copyHtml() {
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([HTML_SAMPLE], { type: "text/html" }),
+            "text/plain": new Blob(["HTML H2\n\nHTML bold and HTML italic\n\n- HTML list item"], {
+              type: "text/plain"
+            })
+          })
+        ]);
+        showToast("HTMLをコピーしました");
+      }
+
+      async function copyRichHtml() {
+        const imageDataUrl = buildImageDataUrl("HTML image test", "Embedded image candidate");
+        const html = [
+          "<h2>HTML rich paste test</h2>",
+          "<p><strong>Bold lead sentence.</strong> This paragraph should keep rich formatting.</p>",
+          "<ul><li>List item one</li><li>List item two</li></ul>",
+          `<p><img src="${imageDataUrl}" alt="Embedded image candidate" style="max-width: 100%; border-radius: 8px;" /></p>`,
+          "<p>Text after image.</p>"
+        ].join("");
+        const plainText =
+          "HTML rich paste test\n\nBold lead sentence.\n\n- List item one\n- List item two\n\n[embedded image]\n\nText after image.";
+
+        await navigator.clipboard.write([
+          new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([plainText], { type: "text/plain" })
+          })
+        ]);
+        showToast("画像込みHTMLをコピーしました");
+      }
+
+      async function copyImage() {
+        const blob = await new Promise((resolve) => {
+          const image = new Image();
+          image.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            canvas.getContext("2d").drawImage(image, 0, 0);
+            canvas.toBlob(resolve, "image/png");
+          };
+          image.src = buildImageDataUrl("X Articles image", "Direct image paste sample");
+        });
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        showToast("画像をコピーしました");
+      }
+
+      function buildImageDataUrl(title, purpose) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1200;
+        canvas.height = 630;
+        const context = canvas.getContext("2d");
+        const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, "#17202a");
+        gradient.addColorStop(0.58, "#0b7a75");
+        gradient.addColorStop(1, "#255f99");
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "rgba(255,255,255,0.12)";
+        for (let index = -canvas.height; index < canvas.width; index += 48) {
+          context.fillRect(index, 0, 14, canvas.height * 2);
+        }
+        context.fillStyle = "rgba(255,255,255,0.92)";
+        context.font = "700 54px sans-serif";
+        drawWrappedText(context, title, 64, 430, canvas.width - 128, 64);
+        context.fillStyle = "rgba(255,255,255,0.78)";
+        context.font = "400 28px sans-serif";
+        drawWrappedText(context, purpose, 64, 540, canvas.width - 128, 38);
+        return canvas.toDataURL("image/png");
+      }
+
+      function drawWrappedText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(/\s+/);
+        let line = "";
+        let currentY = y;
+        words.forEach((word) => {
+          const testLine = line ? `${line} ${word}` : word;
+          if (context.measureText(testLine).width > maxWidth && line) {
+            context.fillText(line, x, currentY);
+            line = word;
+            currentY += lineHeight;
+            return;
+          }
+          line = testLine;
+        });
+        if (line) context.fillText(line, x, currentY);
+      }
+
+      function showToast(message) {
+        let toast = document.querySelector("#toast");
+        if (!toast) {
+          toast = document.createElement("div");
+          toast.id = "toast";
+          toast.className = "toast";
+          document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.setTimeout(() => toast.classList.remove("show"), 1800);
+      }
+
+      document.querySelector("#copyRich").addEventListener("click", () => {
+        copyRichHtml().catch(() => showToast("画像込みHTMLをコピーできませんでした"));
+      });
+      document.querySelector("#copyHtml").addEventListener("click", () => {
+        copyHtml().catch(() => showToast("HTMLをコピーできませんでした"));
+      });
+      document.querySelector("#copyImage").addEventListener("click", () => {
+        copyImage().catch(() => showToast("画像をコピーできませんでした"));
+      });
+      document.querySelector("#copyMarkdown").addEventListener("click", () => {
+        copyText(MARKDOWN_SAMPLE).catch(() => showToast("Markdownをコピーできませんでした"));
+      });
+    </script>
+  </body>
+</html>
