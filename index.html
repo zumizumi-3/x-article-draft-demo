@@ -1086,54 +1086,52 @@
             .join("")}
         `;
 
-        const steps = draft.segments.flatMap((segment) => {
-          const base = [
-            {
-              kind: "text",
-              label: `本文 ${segment.order}`,
-              instruction: segment.text
-            }
-          ];
-          const image = imagesBySegment.get(segment.id);
-          return image
-            ? [
-                ...base,
-                {
-                  kind: "image",
-                  label: image.filename,
-                  instruction: image.prompt
-                }
-              ]
-            : base;
-        });
-        const allSteps = [
+        const operationSteps = [
+          {
+            kind: "copy",
+            label: "本文一括コピー",
+            instruction: "タイトル、本文、画像差し込み位置マーカーをまとめてコピーする。",
+            action: `<button type="button" id="copyPlanText">本文一括コピー</button>`
+          },
           {
             kind: "image",
-            label: draft.banner.filename,
-            instruction: draft.banner.prompt
+            label: "記事バナーをコピー",
+            instruction: `${draft.banner.filename} をコピーし、X Articlesの冒頭に挿入する。`,
+            action: `<button type="button" class="copy-image" data-kind="banner" data-title="${escapeAttr(
+              draft.title
+            )}" data-purpose="${escapeAttr(draft.banner.purpose)}">画像コピー</button>`
           },
-          ...steps
+          {
+            kind: "paste",
+            label: "X Articlesへ本文を貼り付け",
+            instruction: "本文を貼り付けたあと、[画像: ...] のマーカー位置を順に確認する。"
+          },
+          ...draft.images.map((image, index) => ({
+            kind: "image",
+            label: `本文内画像 ${index + 1}`,
+            instruction: `${image.filename} を [画像: ${image.filename}] の位置へ挿入する。`,
+            action: `<button type="button" class="copy-image" data-kind="inline" data-title="${escapeAttr(
+              image.filename
+            )}" data-purpose="${escapeAttr(image.purpose)}">画像コピー</button>`
+          })),
+          {
+            kind: "review",
+            label: "最終確認",
+            instruction: "画像マーカーを削除し、改行、見出し、画像位置を確認して公開する。"
+          }
         ];
 
-        pastePlan.innerHTML = allSteps
+        pastePlan.innerHTML = operationSteps
           .map(
             (step, index) => `
               <section class="item">
                 <div class="item-head">
                   <h3>${index + 1}. ${escapeHtml(step.label)}</h3>
-                  <span class="badge ${step.kind === "image" ? "warn" : ""}">${step.kind}</span>
+                  <span class="badge ${step.kind === "image" ? "warn" : ""}">${escapeHtml(step.kind)}</span>
                 </div>
                 <p class="instruction">${escapeHtml(step.instruction)}</p>
-                ${
-                  step.kind === "image"
-                    ? `<div class="asset-actions">
-                        <button type="button" class="copy-text" data-copy="${escapeAttr(
-                          step.instruction
-                        )}">プロンプトコピー</button>
-                      </div>
-                      <div class="meter" aria-hidden="true"><span></span></div>`
-                    : ""
-                }
+                ${step.action ? `<div class="asset-actions">${step.action}</div>` : ""}
+                ${step.kind === "image" ? '<div class="meter" aria-hidden="true"><span></span></div>' : ""}
               </section>
             `
           )
@@ -1264,6 +1262,12 @@
         copyArticleHtml().catch(() => showToast("HTMLをコピーできませんでした"));
       });
       document.addEventListener("click", (event) => {
+        const copyPlanTextButton = event.target.closest("#copyPlanText");
+        if (copyPlanTextButton) {
+          copyArticleText().catch(() => showToast("本文をコピーできませんでした"));
+          return;
+        }
+
         const copyTextButton = event.target.closest(".copy-text");
         if (copyTextButton) {
           copyText(copyTextButton.dataset.copy).catch(() => showToast("コピーできませんでした"));
