@@ -70,7 +70,7 @@
       .shell {
         min-height: 100vh;
         display: grid;
-        grid-template-rows: 56px 1fr;
+        grid-template-rows: 56px auto auto;
       }
 
       .topbar {
@@ -105,6 +105,217 @@
         display: flex;
         align-items: center;
         gap: 8px;
+      }
+
+      .overview {
+        padding: 18px 16px 0;
+      }
+
+      .overview-inner {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+      }
+
+      .overview-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 14px;
+      }
+
+      .overview-head h2 {
+        font-size: 22px;
+        line-height: 1.25;
+      }
+
+      .overview-head p {
+        max-width: 720px;
+      }
+
+      .story-board {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) 88px minmax(260px, 1.15fr) minmax(220px, 0.9fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .stage {
+        min-width: 0;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #ffffff;
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .stage.accent {
+        border-color: rgba(11, 122, 117, 0.34);
+        background: linear-gradient(180deg, #ffffff 0%, #f1faf8 100%);
+      }
+
+      .stage.output {
+        border-color: rgba(37, 95, 153, 0.34);
+        background: linear-gradient(180deg, #ffffff 0%, #f3f8fc 100%);
+      }
+
+      .stage-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .page-tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 0 8px;
+        border-radius: 999px;
+        color: var(--accent-strong);
+        background: var(--accent-soft);
+        font-size: 11px;
+        white-space: nowrap;
+      }
+
+      .stage ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 7px;
+      }
+
+      .stage li {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+        display: grid;
+        grid-template-columns: 16px 1fr;
+        gap: 6px;
+      }
+
+      .stage li::before {
+        content: "✓";
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      .merge-node {
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 8px;
+        min-height: 100%;
+      }
+
+      .merge-node span {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--ink);
+        color: white;
+        font-size: 20px;
+      }
+
+      .merge-node p {
+        color: var(--muted);
+        font-size: 11px;
+        text-align: center;
+        line-height: 1.35;
+      }
+
+      .artifact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .artifact {
+        min-height: 74px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.74);
+        padding: 9px;
+        display: grid;
+        align-content: space-between;
+        gap: 8px;
+      }
+
+      .artifact strong {
+        font-size: 12px;
+      }
+
+      .artifact small {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
+      .x-editor {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+      }
+
+      .x-editor-bar {
+        height: 28px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0 9px;
+        background: var(--surface-soft);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .x-editor-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--muted);
+        opacity: 0.44;
+      }
+
+      .x-editor-body {
+        padding: 10px;
+        display: grid;
+        gap: 7px;
+      }
+
+      .x-line {
+        height: 8px;
+        border-radius: 999px;
+        background: var(--line);
+      }
+
+      .x-line.short {
+        width: 58%;
+      }
+
+      .x-media {
+        height: 46px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, var(--accent-soft), var(--blue-soft));
+      }
+
+      .section-label {
+        padding: 2px 16px 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: end;
+      }
+
+      .section-label h2 {
+        font-size: 18px;
       }
 
       .workspace {
@@ -296,6 +507,49 @@
         font-size: 24px;
       }
 
+      .banner-slot {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfd;
+        margin-bottom: 18px;
+        overflow: hidden;
+      }
+
+      .banner-art {
+        min-height: 220px;
+        display: grid;
+        align-items: end;
+        padding: 22px;
+        background:
+          linear-gradient(120deg, rgba(23, 32, 42, 0.82), rgba(11, 122, 117, 0.56)),
+          repeating-linear-gradient(
+            35deg,
+            rgba(255, 255, 255, 0.08),
+            rgba(255, 255, 255, 0.08) 10px,
+            rgba(255, 255, 255, 0.02) 10px,
+            rgba(255, 255, 255, 0.02) 20px
+          );
+        color: white;
+      }
+
+      .banner-art h2 {
+        max-width: 520px;
+        font-size: 25px;
+        line-height: 1.18;
+      }
+
+      .asset-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding: 10px 12px 12px;
+      }
+
+      .asset-actions button {
+        min-height: 32px;
+        font-size: 12px;
+      }
+
       .slot-meta {
         padding: 11px 12px;
         display: grid;
@@ -385,7 +639,38 @@
         background: var(--accent);
       }
 
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        min-height: 38px;
+        max-width: min(360px, calc(100vw - 32px));
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--ink);
+        color: white;
+        box-shadow: var(--shadow);
+        font-size: 12px;
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition: opacity 160ms ease, transform 160ms ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
       @media (max-width: 1180px) {
+        .story-board {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .merge-node {
+          min-height: 82px;
+        }
+
         .workspace {
           grid-template-columns: minmax(320px, 0.9fr) minmax(420px, 1.1fr);
         }
@@ -404,6 +689,18 @@
         .workspace {
           grid-template-columns: 1fr;
           padding: 10px;
+        }
+
+        .overview {
+          padding: 10px 10px 0;
+        }
+
+        .overview-head {
+          display: grid;
+        }
+
+        .story-board {
+          grid-template-columns: 1fr;
         }
 
         .panel {
@@ -437,6 +734,107 @@
           <button class="primary">下書き生成</button>
         </div>
       </header>
+
+      <section class="overview">
+        <div class="overview-inner">
+          <div class="overview-head">
+            <div>
+              <h2>テーマと個人情報を掛け合わせて、X Articles用の下書きと画像を生成する</h2>
+              <p class="subtle">
+                別ページで蓄積した個人の考え方・経験・口調を、記事ごとのテーマ入力と合成し、本文・記事バナー・本文内画像・貼り付け手順まで出力する構成案。
+              </p>
+            </div>
+            <span class="badge">Top concept</span>
+          </div>
+
+          <div class="story-board" aria-label="記事生成の構成案">
+            <section class="stage">
+              <div class="stage-head">
+                <h3>個人設定</h3>
+                <span class="page-tag">Settings page</span>
+              </div>
+              <ul>
+                <li>プロフィール、経歴、専門領域</li>
+                <li>価値観、持論、言い切り方</li>
+                <li>避けたい表現、NGテーマ</li>
+                <li>過去記事、実績、引用できる事例</li>
+              </ul>
+            </section>
+
+            <section class="stage">
+              <div class="stage-head">
+                <h3>テーマ決定</h3>
+                <span class="page-tag">Theme page</span>
+              </div>
+              <ul>
+                <li>今回扱うテーマ、読者、課題</li>
+                <li>伝えたい主張、反論への答え</li>
+                <li>使いたいエピソード、根拠</li>
+                <li>読後に取ってほしい行動</li>
+              </ul>
+            </section>
+
+            <div class="merge-node" aria-hidden="true">
+              <span>＋</span>
+              <p>Personal context<br />x Theme brief</p>
+            </div>
+
+            <section class="stage accent">
+              <div class="stage-head">
+                <h3>記事生成</h3>
+                <span class="page-tag">Draft engine</span>
+              </div>
+              <div class="artifact-grid">
+                <div class="artifact">
+                  <strong>本文</strong>
+                  <small>見出し、段落、主張、CTA</small>
+                </div>
+                <div class="artifact">
+                  <strong>記事バナー</strong>
+                  <small>冒頭に置くメイン画像</small>
+                </div>
+                <div class="artifact">
+                  <strong>本文内画像</strong>
+                  <small>センテンス単位で生成候補</small>
+                </div>
+                <div class="artifact">
+                  <strong>貼り付け計画</strong>
+                  <small>コピー順、alt文、プロンプト</small>
+                </div>
+              </div>
+            </section>
+
+            <section class="stage output">
+              <div class="stage-head">
+                <h3>X Articlesへ移す</h3>
+                <span class="page-tag">Operator flow</span>
+              </div>
+              <div class="x-editor">
+                <div class="x-editor-bar">
+                  <span class="x-editor-dot"></span>
+                  <span class="x-editor-dot"></span>
+                  <span class="x-editor-dot"></span>
+                </div>
+                <div class="x-editor-body">
+                  <div class="x-media"></div>
+                  <div class="x-line"></div>
+                  <div class="x-line short"></div>
+                  <div class="x-media"></div>
+                  <div class="x-line"></div>
+                </div>
+              </div>
+              <p class="subtle">公開前に人間が最終確認。画像と本文は個別コピーできる前提。</p>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <div class="section-label">
+        <div>
+          <h2>記事生成ワークスペース</h2>
+          <p class="subtle">トップ構成のうち、記事生成以降の詳細モック</p>
+        </div>
+      </div>
 
       <section class="workspace">
         <aside class="panel">
@@ -579,6 +977,14 @@
 
         return {
           title: titleInput.value.trim() || "Untitled",
+          banner: {
+            id: "banner-1",
+            filename: "article-banner-01.png",
+            purpose: "記事全体の導入バナー",
+            prompt: `Create a wide editorial banner for an X Article. Title: ${
+              titleInput.value.trim() || "Untitled"
+            }. Visual direction: strategic workflow, personal perspective, clean interface details.`
+          },
           segments,
           images
         };
@@ -593,6 +999,23 @@
         });
 
         preview.innerHTML = `
+          <section class="banner-slot">
+            <div class="banner-art">
+              <h2>${escapeHtml(draft.title)}</h2>
+            </div>
+            <div class="slot-meta">
+              <h3>${escapeHtml(draft.banner.filename)}</h3>
+              <p>${escapeHtml(draft.banner.prompt)}</p>
+            </div>
+            <div class="asset-actions">
+              <button type="button" class="copy-image" data-kind="banner" data-title="${escapeAttr(
+                draft.title
+              )}" data-purpose="${escapeAttr(draft.banner.purpose)}">画像コピー</button>
+              <button type="button" class="copy-text" data-copy="${escapeAttr(
+                draft.banner.prompt
+              )}">プロンプトコピー</button>
+            </div>
+          </section>
           <h1 class="preview-title">${escapeHtml(draft.title)}</h1>
           ${draft.segments
             .map((segment) => {
@@ -608,6 +1031,14 @@
                         <div class="slot-meta">
                           <h3>${escapeHtml(image.filename)}</h3>
                           <p>${escapeHtml(image.purpose)}</p>
+                        </div>
+                        <div class="asset-actions">
+                          <button type="button" class="copy-image" data-kind="inline" data-title="${escapeAttr(
+                            image.filename
+                          )}" data-purpose="${escapeAttr(image.purpose)}">画像コピー</button>
+                          <button type="button" class="copy-text" data-copy="${escapeAttr(
+                            image.prompt
+                          )}">プロンプトコピー</button>
                         </div>
                       </section>`
                     : ""
@@ -637,8 +1068,16 @@
               ]
             : base;
         });
+        const allSteps = [
+          {
+            kind: "image",
+            label: draft.banner.filename,
+            instruction: draft.banner.prompt
+          },
+          ...steps
+        ];
 
-        pastePlan.innerHTML = steps
+        pastePlan.innerHTML = allSteps
           .map(
             (step, index) => `
               <section class="item">
@@ -647,7 +1086,16 @@
                   <span class="badge ${step.kind === "image" ? "warn" : ""}">${step.kind}</span>
                 </div>
                 <p class="instruction">${escapeHtml(step.instruction)}</p>
-                ${step.kind === "image" ? '<div class="meter" aria-hidden="true"><span></span></div>' : ""}
+                ${
+                  step.kind === "image"
+                    ? `<div class="asset-actions">
+                        <button type="button" class="copy-text" data-copy="${escapeAttr(
+                          step.instruction
+                        )}">プロンプトコピー</button>
+                      </div>
+                      <div class="meter" aria-hidden="true"><span></span></div>`
+                    : ""
+                }
               </section>
             `
           )
@@ -667,10 +1115,101 @@
         });
       }
 
+      function escapeAttr(value) {
+        return escapeHtml(value).replace(/`/g, "&#096;");
+      }
+
+      async function copyText(value) {
+        await navigator.clipboard.writeText(value);
+        showToast("コピーしました");
+      }
+
+      async function copyMockImage(title, purpose, kind) {
+        if (!window.ClipboardItem) {
+          showToast("このブラウザでは画像コピーに未対応です");
+          return;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = kind === "banner" ? 1400 : 1200;
+        canvas.height = kind === "banner" ? 700 : 800;
+        const context = canvas.getContext("2d");
+        const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, "#17202a");
+        gradient.addColorStop(0.55, "#0b7a75");
+        gradient.addColorStop(1, "#255f99");
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        context.fillStyle = "rgba(255,255,255,0.12)";
+        for (let index = -canvas.height; index < canvas.width; index += 56) {
+          context.fillRect(index, 0, 18, canvas.height * 2);
+        }
+
+        context.fillStyle = "rgba(255,255,255,0.92)";
+        context.font = kind === "banner" ? "700 58px sans-serif" : "700 48px sans-serif";
+        drawWrappedText(context, title, 72, kind === "banner" ? 455 : 500, canvas.width - 144, 68);
+        context.fillStyle = "rgba(255,255,255,0.78)";
+        context.font = "400 30px sans-serif";
+        drawWrappedText(context, purpose, 72, kind === "banner" ? 590 : 650, canvas.width - 144, 42);
+
+        const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        showToast("画像をコピーしました");
+      }
+
+      function drawWrappedText(context, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(/\s+/);
+        let line = "";
+        let currentY = y;
+
+        words.forEach((word) => {
+          const testLine = line ? `${line} ${word}` : word;
+          if (context.measureText(testLine).width > maxWidth && line) {
+            context.fillText(line, x, currentY);
+            line = word;
+            currentY += lineHeight;
+            return;
+          }
+          line = testLine;
+        });
+
+        if (line) {
+          context.fillText(line, x, currentY);
+        }
+      }
+
+      function showToast(message) {
+        let toast = document.querySelector("#toast");
+        if (!toast) {
+          toast = document.createElement("div");
+          toast.id = "toast";
+          toast.className = "toast";
+          document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.setTimeout(() => toast.classList.remove("show"), 1800);
+      }
+
       regenerateButton.addEventListener("click", render);
       titleInput.addEventListener("input", render);
       bodyInput.addEventListener("input", render);
       maxImages.addEventListener("change", render);
+      document.addEventListener("click", (event) => {
+        const copyTextButton = event.target.closest(".copy-text");
+        if (copyTextButton) {
+          copyText(copyTextButton.dataset.copy).catch(() => showToast("コピーできませんでした"));
+          return;
+        }
+
+        const copyImageButton = event.target.closest(".copy-image");
+        if (copyImageButton) {
+          copyMockImage(copyImageButton.dataset.title, copyImageButton.dataset.purpose, copyImageButton.dataset.kind).catch(
+            () => showToast("画像をコピーできませんでした")
+          );
+        }
+      });
       render();
     </script>
   </body>
