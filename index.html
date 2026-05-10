@@ -897,8 +897,8 @@
               <p class="subtle">X Articles貼り込み前の構成確認</p>
             </div>
             <div class="toolbar-group">
-              <button>本文コピー</button>
-              <button>HTMLコピー</button>
+              <button type="button" id="copyArticleText">本文一括コピー</button>
+              <button type="button" id="copyArticleHtml">HTML一括コピー</button>
             </div>
           </div>
           <div class="panel-body">
@@ -935,6 +935,8 @@
       const pastePlan = document.querySelector("#pastePlan");
       const regenerateButton = document.querySelector("#regenerateButton");
       const statusLine = document.querySelector("#statusLine");
+      const copyArticleTextButton = document.querySelector("#copyArticleText");
+      const copyArticleHtmlButton = document.querySelector("#copyArticleHtml");
 
       function segmentBody(body) {
         return body
@@ -988,6 +990,42 @@
           segments,
           images
         };
+      }
+
+      function buildArticlePlainText(draft) {
+        const lines = [
+          draft.title,
+          "",
+          `[画像: ${draft.banner.filename}]`,
+          "",
+          ...draft.segments.flatMap((segment) => {
+            const image = draft.images.find((candidate) => candidate.afterSegmentId === segment.id);
+            return image
+              ? [segment.text, "", `[画像: ${image.filename}]`, ""]
+              : [segment.text, ""];
+          })
+        ];
+
+        return lines.join("\n").trim();
+      }
+
+      function buildArticleHtml(draft) {
+        const imagesBySegment = new Map();
+        draft.images.forEach((image) => {
+          imagesBySegment.set(image.afterSegmentId, image);
+        });
+
+        return [
+          `<h1>${escapeHtml(draft.title)}</h1>`,
+          `<p><strong>[画像: ${escapeHtml(draft.banner.filename)}]</strong></p>`,
+          ...draft.segments.flatMap((segment) => {
+            const image = imagesBySegment.get(segment.id);
+            const paragraph = `<p>${escapeHtml(segment.text)}</p>`;
+            return image
+              ? [paragraph, `<p><strong>[画像: ${escapeHtml(image.filename)}]</strong></p>`]
+              : [paragraph];
+          })
+        ].join("\n");
       }
 
       function render() {
@@ -1124,6 +1162,29 @@
         showToast("コピーしました");
       }
 
+      async function copyArticleText() {
+        const draft = buildDraft();
+        await copyText(buildArticlePlainText(draft));
+      }
+
+      async function copyArticleHtml() {
+        const draft = buildDraft();
+        const html = buildArticleHtml(draft);
+        const plainText = buildArticlePlainText(draft);
+
+        if (window.ClipboardItem) {
+          const item = new ClipboardItem({
+            "text/html": new Blob([html], { type: "text/html" }),
+            "text/plain": new Blob([plainText], { type: "text/plain" })
+          });
+          await navigator.clipboard.write([item]);
+          showToast("HTMLをコピーしました");
+          return;
+        }
+
+        await copyText(plainText);
+      }
+
       async function copyMockImage(title, purpose, kind) {
         if (!window.ClipboardItem) {
           showToast("このブラウザでは画像コピーに未対応です");
@@ -1196,6 +1257,12 @@
       titleInput.addEventListener("input", render);
       bodyInput.addEventListener("input", render);
       maxImages.addEventListener("change", render);
+      copyArticleTextButton.addEventListener("click", () => {
+        copyArticleText().catch(() => showToast("本文をコピーできませんでした"));
+      });
+      copyArticleHtmlButton.addEventListener("click", () => {
+        copyArticleHtml().catch(() => showToast("HTMLをコピーできませんでした"));
+      });
       document.addEventListener("click", (event) => {
         const copyTextButton = event.target.closest(".copy-text");
         if (copyTextButton) {
