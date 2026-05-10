@@ -318,6 +318,32 @@
         font-size: 18px;
       }
 
+      .validation-strip {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .validation-item {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 9px;
+        background: #ffffff;
+        display: grid;
+        gap: 5px;
+      }
+
+      .validation-item strong {
+        font-size: 12px;
+      }
+
+      .validation-item small {
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.35;
+      }
+
       .workspace {
         display: grid;
         grid-template-columns: minmax(320px, 0.88fr) minmax(440px, 1.12fr) minmax(280px, 0.72fr);
@@ -667,6 +693,10 @@
           grid-template-columns: 1fr 1fr;
         }
 
+        .validation-strip {
+          grid-template-columns: 1fr 1fr;
+        }
+
         .merge-node {
           min-height: 82px;
         }
@@ -700,6 +730,10 @@
         }
 
         .story-board {
+          grid-template-columns: 1fr;
+        }
+
+        .validation-strip {
           grid-template-columns: 1fr;
         }
 
@@ -826,6 +860,37 @@
               <p class="subtle">公開前に人間が最終確認。画像と本文は個別コピーできる前提。</p>
             </section>
           </div>
+
+          <div class="validation-strip" aria-label="X Articles editor validation list">
+            <section class="validation-item">
+              <div class="stage-head">
+                <strong>タイトル欄</strong>
+                <span class="badge">confirmed</span>
+              </div>
+              <small>タイトルは本文とは別入力。本文コピーには含めない。</small>
+            </section>
+            <section class="validation-item">
+              <div class="stage-head">
+                <strong>Markdown風入力</strong>
+                <span class="badge warn">needs test</span>
+              </div>
+              <small>#、##、**太字**、リスト、リンクを実機で確認する。</small>
+            </section>
+            <section class="validation-item">
+              <div class="stage-head">
+                <strong>画像ペースト</strong>
+                <span class="badge">confirmed</span>
+              </div>
+              <small>生成画像はコピーして本文中のマーカー位置へ貼る。</small>
+            </section>
+            <section class="validation-item">
+              <div class="stage-head">
+                <strong>画像記法</strong>
+                <span class="badge warn">needs test</span>
+              </div>
+              <small>Markdown画像記法やHTML内画像は対応未確認。</small>
+            </section>
+          </div>
         </div>
       </section>
 
@@ -897,8 +962,9 @@
               <p class="subtle">X Articles貼り込み前の構成確認</p>
             </div>
             <div class="toolbar-group">
-              <button type="button" id="copyArticleText">Markdown一括コピー</button>
-              <button type="button" id="copyArticleHtml">HTML一括コピー</button>
+              <button type="button" id="copyTitle">タイトルコピー</button>
+              <button type="button" id="copyArticleText">本文Markdownコピー</button>
+              <button type="button" id="copyArticleHtml">本文HTMLコピー</button>
             </div>
           </div>
           <div class="panel-body">
@@ -935,6 +1001,7 @@
       const pastePlan = document.querySelector("#pastePlan");
       const regenerateButton = document.querySelector("#regenerateButton");
       const statusLine = document.querySelector("#statusLine");
+      const copyTitleButton = document.querySelector("#copyTitle");
       const copyArticleTextButton = document.querySelector("#copyArticleText");
       const copyArticleHtmlButton = document.querySelector("#copyArticleHtml");
 
@@ -994,8 +1061,6 @@
 
       function buildArticleMarkdown(draft) {
         const lines = [
-          `# ${draft.title}`,
-          "",
           `[画像: ${draft.banner.filename}]`,
           "",
           ...draft.segments.flatMap((segment, index) => {
@@ -1012,7 +1077,7 @@
 
       function formatSegmentMarkdown(text, index) {
         if (index === 0) {
-          return `**${text}**`;
+          return `## 導入\n\n**${text}**`;
         }
 
         if (index % 3 === 0) {
@@ -1033,7 +1098,6 @@
         });
 
         return [
-          `<h1>${escapeHtml(draft.title)}</h1>`,
           `<p><strong>[画像: ${escapeHtml(draft.banner.filename)}]</strong></p>`,
           ...draft.segments.flatMap((segment) => {
             const image = imagesBySegment.get(segment.id);
@@ -1106,9 +1170,15 @@
         const operationSteps = [
           {
             kind: "copy",
-            label: "Markdown一括コピー",
-            instruction: "# 見出し、## 小見出し、**太字**、画像差し込み位置マーカーをまとめてコピーする。",
-            action: `<button type="button" id="copyPlanText">Markdown一括コピー</button>`
+            label: "タイトルコピー",
+            instruction: "X Articlesのタイトル欄へ個別に貼り付ける。本文にはタイトルを含めない。",
+            action: `<button type="button" id="copyPlanTitle">タイトルコピー</button>`
+          },
+          {
+            kind: "copy",
+            label: "本文Markdownコピー",
+            instruction: "本文欄へ貼る。## 小見出し、**太字**、画像差し込み位置マーカーを含める。",
+            action: `<button type="button" id="copyPlanText">本文Markdownコピー</button>`
           },
           {
             kind: "image",
@@ -1120,7 +1190,7 @@
           },
           {
             kind: "paste",
-            label: "X Articlesへ本文を貼り付け",
+            label: "本文欄へ貼り付け",
             instruction: "Markdown風の書式が反映されるか確認し、[画像: ...] のマーカー位置を順に確認する。"
           },
           ...draft.images.map((image, index) => ({
@@ -1175,6 +1245,11 @@
       async function copyText(value) {
         await navigator.clipboard.writeText(value);
         showToast("コピーしました");
+      }
+
+      async function copyTitle() {
+        const draft = buildDraft();
+        await copyText(draft.title);
       }
 
       async function copyArticleText() {
@@ -1272,6 +1347,9 @@
       titleInput.addEventListener("input", render);
       bodyInput.addEventListener("input", render);
       maxImages.addEventListener("change", render);
+      copyTitleButton.addEventListener("click", () => {
+        copyTitle().catch(() => showToast("タイトルをコピーできませんでした"));
+      });
       copyArticleTextButton.addEventListener("click", () => {
         copyArticleText().catch(() => showToast("本文をコピーできませんでした"));
       });
@@ -1279,6 +1357,12 @@
         copyArticleHtml().catch(() => showToast("HTMLをコピーできませんでした"));
       });
       document.addEventListener("click", (event) => {
+        const copyPlanTitleButton = event.target.closest("#copyPlanTitle");
+        if (copyPlanTitleButton) {
+          copyTitle().catch(() => showToast("タイトルをコピーできませんでした"));
+          return;
+        }
+
         const copyPlanTextButton = event.target.closest("#copyPlanText");
         if (copyPlanTextButton) {
           copyArticleText().catch(() => showToast("本文をコピーできませんでした"));
