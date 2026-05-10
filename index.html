@@ -897,7 +897,7 @@
               <p class="subtle">X Articles貼り込み前の構成確認</p>
             </div>
             <div class="toolbar-group">
-              <button type="button" id="copyArticleText">本文一括コピー</button>
+              <button type="button" id="copyArticleText">Markdown一括コピー</button>
               <button type="button" id="copyArticleHtml">HTML一括コピー</button>
             </div>
           </div>
@@ -992,21 +992,38 @@
         };
       }
 
-      function buildArticlePlainText(draft) {
+      function buildArticleMarkdown(draft) {
         const lines = [
-          draft.title,
+          `# ${draft.title}`,
           "",
           `[画像: ${draft.banner.filename}]`,
           "",
-          ...draft.segments.flatMap((segment) => {
+          ...draft.segments.flatMap((segment, index) => {
             const image = draft.images.find((candidate) => candidate.afterSegmentId === segment.id);
+            const formattedText = formatSegmentMarkdown(segment.text, index);
             return image
-              ? [segment.text, "", `[画像: ${image.filename}]`, ""]
-              : [segment.text, ""];
+              ? [formattedText, "", `[画像: ${image.filename}]`, ""]
+              : [formattedText, ""];
           })
         ];
 
         return lines.join("\n").trim();
+      }
+
+      function formatSegmentMarkdown(text, index) {
+        if (index === 0) {
+          return `**${text}**`;
+        }
+
+        if (index % 3 === 0) {
+          return `## ${text}`;
+        }
+
+        if (text.includes("重要")) {
+          return text.replace("重要", "**重要**");
+        }
+
+        return text;
       }
 
       function buildArticleHtml(draft) {
@@ -1089,9 +1106,9 @@
         const operationSteps = [
           {
             kind: "copy",
-            label: "本文一括コピー",
-            instruction: "タイトル、本文、画像差し込み位置マーカーをまとめてコピーする。",
-            action: `<button type="button" id="copyPlanText">本文一括コピー</button>`
+            label: "Markdown一括コピー",
+            instruction: "# 見出し、## 小見出し、**太字**、画像差し込み位置マーカーをまとめてコピーする。",
+            action: `<button type="button" id="copyPlanText">Markdown一括コピー</button>`
           },
           {
             kind: "image",
@@ -1104,7 +1121,7 @@
           {
             kind: "paste",
             label: "X Articlesへ本文を貼り付け",
-            instruction: "本文を貼り付けたあと、[画像: ...] のマーカー位置を順に確認する。"
+            instruction: "Markdown風の書式が反映されるか確認し、[画像: ...] のマーカー位置を順に確認する。"
           },
           ...draft.images.map((image, index) => ({
             kind: "image",
@@ -1162,13 +1179,13 @@
 
       async function copyArticleText() {
         const draft = buildDraft();
-        await copyText(buildArticlePlainText(draft));
+        await copyText(buildArticleMarkdown(draft));
       }
 
       async function copyArticleHtml() {
         const draft = buildDraft();
         const html = buildArticleHtml(draft);
-        const plainText = buildArticlePlainText(draft);
+        const plainText = buildArticleMarkdown(draft);
 
         if (window.ClipboardItem) {
           const item = new ClipboardItem({
